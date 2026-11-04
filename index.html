@@ -24,7 +24,7 @@
   function storedChoice(){try{var x=localStorage.getItem(key);return x==='accepted'||x==='rejected'?x:null;}catch(e){return null;}}
   function saveChoice(x){try{localStorage.setItem(key,x);}catch(e){}}
   function startMetaPixel(){
-    if(initialized){return;}
+    if(initialized){if(typeof window.fbq==='function'){window.fbq('consent','grant');}return;}
     initialized=true;
     !function(f,b,e,v,n,t,s){
       if(f.fbq){return;}
@@ -50,7 +50,7 @@
     banner.hidden=!!choice;
     if(choice==='accepted'){startMetaPixel();}
     accept.addEventListener('click',function(){saveChoice('accepted');banner.hidden=true;startMetaPixel();});
-    reject.addEventListener('click',function(){saveChoice('rejected');banner.hidden=true;});
+    reject.addEventListener('click',function(){saveChoice('rejected');banner.hidden=true;if(initialized&&typeof window.fbq==='function'){window.fbq('consent','revoke');}});
     settings.addEventListener('click',function(){banner.hidden=false;accept.focus();});
   }
   if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',onReady);}
