@@ -1,0 +1,30 @@
+name: Check isolated Meta CAPI proposal
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "meta-capi-bridge.js"
+      - "capi-relay/**"
+      - "tests/**"
+      - ".github/workflows/verify-capi-draft.yml"
+  workflow_dispatch:
+jobs:
+  offline-tests:
+    name: Offline unit tests (no Meta token)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Python syntax
+        run: python -m py_compile capi-relay/app.py capi-relay/tests/test_app.py
+      - name: Backend HMAC, privacy and dedup tests
+        run: python -m unittest discover -s capi-relay/tests -p "test_*.py" -v
+      - name: Browser consent and dedup tests
+        run: node --test tests/test-bridge.cjs

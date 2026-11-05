@@ -15,6 +15,7 @@
 <p>Podemos usar o Pixel da Meta para medir visitas e interesse neste guia e melhorar nossos anúncios. Ele só será carregado se você aceitar. Recusar não impede o acesso à página nem ao checkout. <a href="privacidade.html">Leia a política de privacidade</a>.</p>
 <div class="rb-consent-actions"><button id="rb-consent-reject" type="button">Recusar rastreamento</button><button id="rb-consent-accept" type="button">Aceitar rastreamento</button></div>
 </aside>
+<script src="meta-capi-bridge.js"></script>
 <script>
 (function(){
   'use strict';
@@ -24,6 +25,7 @@
   function storedChoice(){try{var x=localStorage.getItem(key);return x==='accepted'||x==='rejected'?x:null;}catch(e){return null;}}
   function saveChoice(x){try{localStorage.setItem(key,x);}catch(e){}}
   function startMetaPixel(){
+    window.RB_META_CONSENT_GRANTED=true;
     if(initialized){if(typeof window.fbq==='function'){window.fbq('consent','grant');}return;}
     initialized=true;
     !function(f,b,e,v,n,t,s){
@@ -37,7 +39,12 @@
     if(typeof fbq==='function'){
       fbq('init',pixelId);
       fbq('track','PageView');
-      fbq('track','ViewContent',{content_type:'product',content_ids:['8716055'],content_name:'Guia digital 7 Habitos'});
+      var payloadViewContent={content_type:'product',content_ids:['8716055'],content_name:'Guia digital 7 Habitos'};
+      if(typeof window.rbTrackViewContentWithCapi==='function'){
+        window.rbTrackViewContentWithCapi(payloadViewContent);
+      }else{
+        fbq('track','ViewContent',payloadViewContent);
+      }
     }
   }
   function onReady(){
@@ -50,7 +57,7 @@
     banner.hidden=!!choice;
     if(choice==='accepted'){startMetaPixel();}
     accept.addEventListener('click',function(){saveChoice('accepted');banner.hidden=true;startMetaPixel();});
-    reject.addEventListener('click',function(){saveChoice('rejected');banner.hidden=true;if(initialized&&typeof window.fbq==='function'){window.fbq('consent','revoke');}});
+    reject.addEventListener('click',function(){window.RB_META_CONSENT_GRANTED=false;saveChoice('rejected');banner.hidden=true;if(initialized&&typeof window.fbq==='function'){window.fbq('consent','revoke');}});
     settings.addEventListener('click',function(){banner.hidden=false;accept.focus();});
   }
   if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',onReady);}
