@@ -4,11 +4,8 @@
  */
 (function () {
   "use strict";
-  var PIXEL_CONSENT_KEY = "rb_meta_tracking_choice_v1";
-
   function hasConsent() {
-    try { return window.localStorage.getItem(PIXEL_CONSENT_KEY) === "accepted"; }
-    catch (_) { return false; }
+    return window.RB_META_CONSENT_GRANTED === true;
   }
   function makeEventId() {
     if (!window.crypto || typeof window.crypto.getRandomValues !== "function") return null;
