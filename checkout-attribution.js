@@ -33,7 +33,7 @@
   function sck(campaign) {
     // Hotmart recomenda manter o código curto, sem underscore.
     var source = slug(campaign.utm_source || "landing").slice(0, 14);
-    var medium = slug(campaign.utm_medium || "").slice(0, 10);
+    var medium = slug(campaign.utm_medium || "").slice(0, 12);
     var name = "r7-" + source + (medium ? "-" + medium : "");
     return name.slice(0, 30);
   }
