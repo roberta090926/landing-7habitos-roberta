@@ -1,0 +1,21 @@
+name: Testar rastreamento de checkout Hotmart
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "checkout-attribution.js"
+      - "tests/attribution.test.cjs"
+      - ".github/workflows/test-attribution.yml"
+  workflow_dispatch:
+jobs:
+  attribution:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --check checkout-attribution.js
+      - run: node --test tests/attribution.test.cjs
