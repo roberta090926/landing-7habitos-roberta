@@ -43,7 +43,7 @@ def _config():
 
 
 def _response(start, code, data, origin=None):
-    content = json.dumps(data, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    content = b"" if code.startswith("204") else json.dumps(data, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     headers = [
         ("Content-Type", "application/json; charset=utf-8"),
         ("Content-Length", str(len(content))),
